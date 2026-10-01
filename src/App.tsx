@@ -1,37 +1,25 @@
 import { useState } from "react";
-import type { Metar } from "./types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchMetar } from "./api";
 import { MetarCard } from "./MetarCard";
 
 function App() {
   const [icao, setIcao] = useState("EPKT");
-  const [metar, setMetar] = useState<Metar | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [station, setStation] = useState(""); // zatwierdzone lotnisko
 
-  const fetchMetar = async (station: string) => {
-    setLoading(true);
-    setError("");
-    setMetar(null);
-
-    try {
-      const res = await fetch(`https://avwx.rest/api/metar/${station}`, {
-        headers: { Authorization: `BEARER ${import.meta.env.VITE_AVWX_TOKEN}` },
-      });
-      if (!res.ok) throw new Error(`Błąd API: ${res.status}`);
-      const data: Metar = await res.json();
-      setMetar(data);
-      console.log(data);
-    } catch (err) {
-      console.error(err);
-      setError("Nie udało się pobrać danych. Sprawdź kod lotniska.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: metar,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["metar", station],
+    queryFn: () => fetchMetar(station),
+    enabled: station !== "",
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchMetar(icao.trim().toUpperCase());
+    setStation(icao.trim().toUpperCase());
   };
 
   return (
@@ -47,8 +35,8 @@ function App() {
         <button type="submit">Sprawdź</button>
       </form>
 
-      {loading && <p>Ładowanie...</p>}
-      {error && <p>{error}</p>}
+      {isLoading && <p>Ładowanie...</p>}
+      {isError && <p>Nie udało się pobrać danych. Sprawdź kod lotniska.</p>}
       {metar && <MetarCard metar={metar} />}
     </main>
   );
