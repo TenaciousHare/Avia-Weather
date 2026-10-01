@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchMetar } from "./api";
 import { MetarCard } from "./MetarCard";
+import styles from "./App.module.css";
 
 function App() {
   const [icao, setIcao] = useState("EPKT");
@@ -23,16 +24,19 @@ function App() {
   };
 
   return (
-    <main style={{ fontFamily: "system-ui", padding: "2rem" }}>
+    <main className={styles.app}>
       <h1>METAR</h1>
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <input
           value={icao}
           onChange={(e) => setIcao(e.target.value)}
           placeholder="Kod ICAO (np. EPKT)"
           maxLength={4}
+          className={styles.input}
         />
-        <button type="submit">Sprawdź</button>
+        <button className={styles.button} type="submit">
+          Sprawdź
+        </button>
       </form>
 
       {isLoading && <p>Ładowanie...</p>}
