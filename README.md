@@ -1,75 +1,44 @@
-# React + TypeScript + Vite
+# METAR Weather Viewer ✈️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small web app for checking current aviation weather (METAR) for any airport by its ICAO code. Enter a code and get the decoded conditions plus a color-coded flight category at a glance.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Search METAR by ICAO code (e.g. `EPKT`, `EGLL`)
+- Decoded conditions: temperature, wind (with gusts), and cloud layers
+- Color-coded flight category (VFR / MVFR / IFR / LIFR)
+- Request caching via TanStack Query — revisiting an airport is instant
+- Raw METAR string shown alongside the decoded view
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + TypeScript
+- Vite
+- TanStack Query (server state and caching)
+- AVWX REST API (decoded METAR data)
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js (LTS)
+- A free AVWX API token from https://avwx.rest
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Install dependencies:
+   `npm install`
+2. Create a `.env` file in the project root with your token:
+   `VITE_AVWX_TOKEN=your-token-here`
+3. Start the dev server:
+   `npm run dev`
 
-```
+Open the URL shown in the terminal and enter an ICAO code.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Notes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The AVWX token is read from `.env` (git-ignored). In a production deployment it would be proxied through a backend rather than exposed in the client bundle.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
 
-```
+_Built as a learning project while refreshing modern React + TypeScript._
