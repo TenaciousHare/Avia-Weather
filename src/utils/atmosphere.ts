@@ -1,6 +1,6 @@
 export function isaDeviation(tempC: number, elevationFt: number): number {
   const isaTemp = 15 - 1.98 * (elevationFt / 1000);
-  return Math.round(tempC - isaTemp);
+  return Math.round(tempC - isaTemp) || 0;
 }
 
 export function relativeHumidity(tempC: number, dewpointC: number): number {
