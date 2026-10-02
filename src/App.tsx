@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchMetar } from "./api";
+import { fetchMetar, fetchStation } from "./api";
 import { MetarCard } from "./MetarCard";
+import { StationCard } from "./StationCard";
 import styles from "./App.module.css";
 
 function App() {
@@ -15,6 +16,12 @@ function App() {
   } = useQuery({
     queryKey: ["metar", station],
     queryFn: () => fetchMetar(station),
+    enabled: station !== "",
+  });
+
+  const { data: stationInfo } = useQuery({
+    queryKey: ["station", station],
+    queryFn: () => fetchStation(station),
     enabled: station !== "",
   });
 
@@ -41,7 +48,12 @@ function App() {
 
       {isLoading && <p>Ładowanie...</p>}
       {isError && <p>Nie udało się pobrać danych. Sprawdź kod lotniska.</p>}
-      {metar && <MetarCard metar={metar} />}
+      {stationInfo && metar && (
+        <StationCard station={stationInfo} obsTime={metar.time.dt} />
+      )}
+      {metar && stationInfo && (
+        <MetarCard metar={metar} elevationFt={stationInfo.elevation_ft} />
+      )}
     </main>
   );
 }
