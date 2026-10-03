@@ -4,7 +4,7 @@
 
 **[Live demo →](https://avia-weather.netlify.app/)**
 
-A web app for checking current aviation weather (METAR) for any airport by its ICAO code. Enter a code and get the fully decoded conditions, the station details, and a color-coded flight category at a glance.
+A web app for checking current aviation weather for any airport by its ICAO code. Enter a code to get the fully decoded METAR — station details, conditions and a color-coded flight category — plus the TAF forecast broken down period by period.
 
 ## Features
 
@@ -20,6 +20,7 @@ A web app for checking current aviation weather (METAR) for any airport by its I
 - **Freshness indicator** — the observation age is color-coded (green / orange / red) by how long ago the METAR was issued
 - Request caching via TanStack Query — revisiting an airport is instant
 - Raw METAR string shown alongside the decoded view
+- **TAF forecast**, split into periods (FROM / BECMG / TEMPO) — each with its validity window (UTC), flight category, wind (incl. variable "VRB"), visibility and clouds, in metric units
 
 ## Tech stack
 
@@ -47,14 +48,14 @@ Open the URL shown in the terminal and enter an ICAO code.
 
 ## Tests
 
-Pure utility functions (wind, atmosphere and time helpers) are covered by Vitest unit tests:
+Pure utility functions (wind, atmosphere, time and unit helpers) are covered by Vitest unit tests:
 
 ```
 npm run test       # watch mode
 npm run test:run   # single run (used in CI)
 ```
 
-31 tests covering cardinal wind conversion, knots→m/s, ISA deviation, relative humidity, observation age (with an injected clock for determinism), freshness thresholds and local-time formatting.
+39 tests covering cardinal wind conversion, knots→m/s, feet→m and visibility formatting, ISA deviation, relative humidity, flight-category colors (including the unknown-value fallback), observation age (with an injected clock for determinism), freshness thresholds, and local-time / UTC formatting.
 
 ## CI
 
