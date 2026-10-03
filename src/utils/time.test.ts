@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { minutesAgo, formatLMT, freshnessColor } from "./time";
+import { minutesAgo, formatLMT, freshnessColor, formatZulu } from "./time";
 
 const now = new Date("2026-10-02T12:00:00Z"); // nasza "teraźniejszość"
 
@@ -43,5 +43,15 @@ describe("formatLMT", () => {
   });
   it("brzeg - przeskok doby + wiodące zero", () => {
     expect(formatLMT("2026-10-02T23:30:00Z", 15)).toBe("3.10.2026, 00:30 LMT");
+  });
+});
+
+describe("formatZulu", () => {
+  it("formatuje typową datę w UTC", () => {
+    expect(formatZulu("2026-10-03T12:00:00Z")).toBe("3.10.2026, 12:00 UTC");
+  });
+
+  it("dodaje wiodące zero w godzinie i minucie", () => {
+    expect(formatZulu("2026-10-03T05:07:00Z")).toBe("3.10.2026, 05:07 UTC");
   });
 });
