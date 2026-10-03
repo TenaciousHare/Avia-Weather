@@ -1,3 +1,11 @@
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .card {
   max-width: 420px;
   margin: 1.5rem auto;
@@ -9,22 +17,23 @@
   font-family: system-ui, sans-serif;
 }
 
-.badge {
-  padding: 2px 10px;
-  border-radius: 999px;
-  color: white;
-  font-size: 0.9rem;
+.period {
+  background: #f1f5f9;
+  padding: 0.8rem;
+  border-radius: 12px;
+  margin: 0.8rem auto;
 }
 
-.station {
+.periodHeader {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin: 0 0 0 0.6rem;
+  font-size: 1rem;
 }
 
-.row {
+.row,
+.validity {
   margin: 0.4rem 0;
   color: #334155;
 }

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchMetar, fetchStation } from "./api";
+import { fetchMetar, fetchStation, fetchTaf } from "./api";
 import { MetarCard } from "./MetarCard";
 import { StationCard } from "./StationCard";
 import styles from "./App.module.css";
+import { TafCard } from "./TafCard";
 
 function App() {
   const [icao, setIcao] = useState("EPKT");
@@ -23,6 +24,12 @@ function App() {
     queryKey: ["station", station],
     queryFn: () => fetchStation(station),
     enabled: station !== "",
+  });
+
+  const { data: taf } = useQuery({
+    queryKey: ["taf", station],
+    queryFn: () => fetchTaf(station),
+    enabled: !!station,
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,6 +61,7 @@ function App() {
       {metar && stationInfo && (
         <MetarCard metar={metar} elevationFt={stationInfo.elevation_ft} />
       )}
+      {taf && <TafCard taf={taf} />}
     </main>
   );
 }

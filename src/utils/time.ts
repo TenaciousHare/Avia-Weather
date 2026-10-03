@@ -13,6 +13,16 @@ export function formatLMT(utcIso: string, longitude: number): string {
   return `${d}.${m}.${y}, ${hh}:${mm} LMT`;
 }
 
+export function formatZulu(utcIso: string): string {
+  const utc = new Date(utcIso);
+  const d = utc.getUTCDate();
+  const m = utc.getUTCMonth() + 1; // miesiące liczone od 0
+  const y = utc.getUTCFullYear();
+  const hh = String(utc.getUTCHours()).padStart(2, "0");
+  const mm = String(utc.getUTCMinutes()).padStart(2, "0");
+  return `${d}.${m}.${y}, ${hh}:${mm} UTC`;
+}
+
 export function minutesAgo(utcIso: string, now: Date = new Date()): number {
   const obs = new Date(utcIso);
   const diffMs = now.getTime() - obs.getTime();

@@ -2,6 +2,8 @@ import type { Metar } from "./types";
 import styles from "./MetarCard.module.css";
 import { degreesToCardinal, knotsToMps } from "./utils/wind";
 import { isaDeviation, relativeHumidity } from "./utils/atmosphere";
+import { flightRuleColor } from "./utils/flightRules";
+import { feetToMeters, formatVisibility } from "./utils/units";
 
 export function MetarCard({
   metar,
@@ -10,13 +12,6 @@ export function MetarCard({
   metar: Metar;
   elevationFt: number;
 }) {
-  const colors: Record<string, string> = {
-    VFR: "green",
-    MVFR: "blue",
-    IFR: "red",
-    LIFR: "purple",
-  };
-
   const dev = isaDeviation(metar.temperature.value, elevationFt);
 
   return (
@@ -25,7 +20,7 @@ export function MetarCard({
         <span>{metar.station}</span>
         <span
           className={styles.badge}
-          style={{ backgroundColor: colors[metar.flight_rules] }}
+          style={{ backgroundColor: flightRuleColor(metar.flight_rules) }}
         >
           {metar.flight_rules}
         </span>
@@ -42,22 +37,27 @@ export function MetarCard({
       <p className={styles.row}>
         Ciśnienie: {metar.altimeter.value} {metar.units.altimeter}
       </p>
+      {metar.wind_direction && metar.wind_speed && (
+        <p className={styles.row}>
+          Wiatr:{" "}
+          {metar.wind_direction.value !== null
+            ? `${metar.wind_direction.value}° (${degreesToCardinal(metar.wind_direction.value)})`
+            : metar.wind_direction.repr}{" "}
+          {knotsToMps(metar.wind_speed.value)} m/s
+          {metar.wind_gust &&
+            `, w porywach do ${knotsToMps(metar.wind_gust.value)} m/s`}
+        </p>
+      )}
       <p className={styles.row}>
-        Wiatr: {metar.wind_direction.value}° (
-        {degreesToCardinal(metar.wind_direction.value)}){" "}
-        {knotsToMps(metar.wind_speed.value)} m/s{" "}
-        {metar.wind_gust && (
-          <span> W porywach do {knotsToMps(metar.wind_gust.value)} m/s</span>
-        )}
+        Widzialność: {formatVisibility(metar.visibility)}
       </p>
-      <p className={styles.row}>Widzialność: {metar.visibility.repr}</p>
       {metar.clouds.length === 0 ? (
         <p className={styles.row}>Bez chmur</p>
       ) : (
         <ul className={styles.clouds}>
           {metar.clouds.map((cloud) => (
             <li key={cloud.repr}>
-              {cloud.type} na {cloud.altitude * 100}ft
+              {cloud.type} na {feetToMeters(cloud.altitude * 100)}ft
             </li>
           ))}
         </ul>
