@@ -17,19 +17,21 @@ function App() {
   } = useQuery({
     queryKey: ["metar", station],
     queryFn: () => fetchMetar(station),
-    enabled: station !== "",
+    enabled: !!station,
+    refetchInterval: 300_000,
   });
 
   const { data: stationInfo } = useQuery({
     queryKey: ["station", station],
     queryFn: () => fetchStation(station),
-    enabled: station !== "",
+    enabled: !!station,
   });
 
   const { data: taf } = useQuery({
     queryKey: ["taf", station],
     queryFn: () => fetchTaf(station),
     enabled: !!station,
+    refetchInterval: 300_000,
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,7 +61,11 @@ function App() {
         <StationCard station={stationInfo} obsTime={metar.time.dt} />
       )}
       {metar && stationInfo && (
-        <MetarCard metar={metar} elevationFt={stationInfo.elevation_ft} />
+        <MetarCard
+          key={station}
+          metar={metar}
+          elevationFt={stationInfo.elevation_ft}
+        />
       )}
       {taf && <TafCard taf={taf} />}
     </main>

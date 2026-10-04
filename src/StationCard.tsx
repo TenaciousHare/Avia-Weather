@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import type { Station } from "./types";
 import { formatLMT, minutesAgo, freshnessColor } from "./utils/time";
 import styles from "./StationCard.module.css";
@@ -9,7 +10,13 @@ export function StationCard({
   station: Station;
   obsTime: string;
 }) {
-  const age = minutesAgo(obsTime);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const age = minutesAgo(obsTime, now);
   return (
     <section className={styles.card}>
       <h2 className={styles.name}>{station.name}</h2>
