@@ -1,26 +1,12 @@
 import type { Metar, Station, Taf } from "./types";
 
-export async function fetchMetar(station: string): Promise<Metar> {
-  const res = await fetch(`https://avwx.rest/api/metar/${station}`, {
-    headers: { Authorization: `BEARER ${import.meta.env.VITE_AVWX_TOKEN}` },
-  });
+async function fetchAvwx<T>(type: string, icao: string): Promise<T> {
+  const res = await fetch(`/api/avwx?type=${type}&icao=${icao}`);
   if (!res.ok) throw new Error(`Błąd API: ${res.status}`);
   return res.json();
 }
 
-export async function fetchStation(icao: string): Promise<Station> {
-  const res = await fetch(`https://avwx.rest/api/station/${icao}`, {
-    headers: { Authorization: `BEARER ${import.meta.env.VITE_AVWX_TOKEN}` },
-  });
-  if (!res.ok) throw new Error(`Błąd API (station): ${res.status}`);
-  return res.json();
-}
-
-export async function fetchTaf(station: string): Promise<Taf> {
-  const res = await fetch(`https://avwx.rest/api/taf/${station}`, {
-    headers: { Authorization: `BEARER ${import.meta.env.VITE_AVWX_TOKEN}` },
-  });
-  if (!res.ok) throw new Error(`Błąd API: ${res.status}`);
-
-  return res.json();
-}
+export const fetchMetar = (icao: string) => fetchAvwx<Metar>("metar", icao);
+export const fetchTaf = (icao: string) => fetchAvwx<Taf>("taf", icao);
+export const fetchStation = (icao: string) =>
+  fetchAvwx<Station>("station", icao);

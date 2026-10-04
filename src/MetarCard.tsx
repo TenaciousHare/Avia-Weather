@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from "react";
 import type { Metar } from "./types";
 import styles from "./MetarCard.module.css";
 import { degreesToCardinal, knotsToMps } from "./utils/wind";
@@ -12,7 +13,25 @@ export function MetarCard({
   metar: Metar;
   elevationFt: number;
 }) {
+  const prev = useRef<{ dt: string; pressure: number } | null>(null);
+  const [trend, setTrend] = useState<"↑" | "↓" | "→" | null>(null);
   const dev = isaDeviation(metar.temperature.value, elevationFt);
+
+  useEffect(() => {
+    const dt = metar.time.dt;
+    const pressure = metar.altimeter.value;
+
+    if (prev.current && dt !== prev.current.dt) {
+      if (pressure > prev.current.pressure) {
+        setTrend("↑");
+      } else if (pressure < prev.current.pressure) {
+        setTrend("↓");
+      } else {
+        setTrend("→");
+      }
+    }
+    prev.current = { dt, pressure };
+  }, [metar.time.dt]);
 
   return (
     <section className={styles.card}>
@@ -35,7 +54,8 @@ export function MetarCard({
         {relativeHumidity(metar.temperature.value, metar.dewpoint.value)}%
       </p>
       <p className={styles.row}>
-        Ciśnienie: {metar.altimeter.value} {metar.units.altimeter}
+        Ciśnienie: {metar.altimeter.value} {metar.units.altimeter}{" "}
+        {trend && <span>{trend}</span>}
       </p>
       {metar.wind_direction && metar.wind_speed && (
         <p className={styles.row}>
@@ -57,7 +77,7 @@ export function MetarCard({
         <ul className={styles.clouds}>
           {metar.clouds.map((cloud) => (
             <li key={cloud.repr}>
-              {cloud.type} na {feetToMeters(cloud.altitude * 100)}ft
+              {cloud.type} na {feetToMeters(cloud.altitude * 100)} m
             </li>
           ))}
         </ul>
