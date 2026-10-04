@@ -21,6 +21,8 @@ A web app for checking current aviation weather for any airport by its ICAO code
 - Request caching via TanStack Query — revisiting an airport is instant
 - Raw METAR string shown alongside the decoded view
 - **TAF forecast**, split into periods (FROM / BECMG / TEMPO) — each with its validity window (UTC), flight category, wind (incl. variable "VRB"), visibility and clouds, in metric units
+- **Auto-refresh** every 5 minutes (TanStack Query), with a live, ticking observation-age indicator
+- **Pressure trend** (rising ↑ / falling ↓ / steady →) derived from successive observations
 
 ## Tech stack
 
@@ -30,6 +32,7 @@ A web app for checking current aviation weather for any airport by its ICAO code
 - CSS Modules
 - Vitest (unit tests)
 - AVWX REST API (decoded METAR + station data)
+- Netlify Functions (serverless proxy for the AVWX API)
 
 ## Getting started
 
@@ -41,10 +44,11 @@ A web app for checking current aviation weather for any airport by its ICAO code
 ### Setup
 
 1. Install dependencies: `npm install`
-2. Create a `.env` file in the project root with your token: `VITE_AVWX_TOKEN=your-token-here`
-3. Start the dev server: `npm run dev`
+2. Create a `.env` file with your AVWX token (note: **no** `VITE_` prefix — it stays server-side): `AVWX_TOKEN=your-token-here`
+3. Install the Netlify CLI once: `npm i -D netlify-cli`
+4. Start the dev server (Vite + functions together): `npx netlify dev`
 
-Open the URL shown in the terminal and enter an ICAO code.
+> Plain `npm run dev` runs only Vite, so the `/api/avwx` function won't be available. Use `netlify dev` locally.
 
 ## Tests
 
@@ -63,7 +67,7 @@ Every push and pull request to `main` runs lint, tests and a production build vi
 
 ## Notes
 
-The AVWX token is read from `.env` (git-ignored) in development, and from an environment variable on the deployment host. Because this is a client-side app, in a production setting the token would be proxied through a backend (e.g. a serverless function) rather than exposed in the client bundle.
+The AVWX token is never exposed to the browser. All requests are proxied through a Netlify Function (`/api/avwx`) that attaches the token server-side from the `AVWX_TOKEN` environment variable and validates the request against an allowlist before forwarding it to AVWX.
 
 ---
 
