@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchMetar, fetchStation, fetchTaf } from "./api";
 import { MetarCard } from "./MetarCard";
 import { StationCard } from "./StationCard";
 import styles from "./App.module.css";
 import { TafCard } from "./TafCard";
+import { SunIcon } from "./icons/SunIcon";
+import { MoonIcon } from "./icons/MoonIcon";
 
 function App() {
   const [icao, setIcao] = useState("EPKT");
-  const [station, setStation] = useState(""); // zatwierdzone lotnisko
+  const [station, setStation] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const {
     data: metar,
@@ -41,7 +55,17 @@ function App() {
 
   return (
     <main className={styles.app}>
-      <h1>METAR</h1>
+      <header className={styles.header}>
+        <h1>METAR</h1>
+        <button
+          className={styles.themeToggle}
+          type="button"
+          onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+          aria-label="Przełącz motyw"
+        >
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </button>
+      </header>
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
           value={icao}
