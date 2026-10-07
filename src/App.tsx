@@ -46,7 +46,8 @@ function App() {
         <input
           value={icao}
           onChange={(e) => setIcao(e.target.value)}
-          placeholder="Kod ICAO (np. EPKT)"
+          onFocus={(e) => e.currentTarget.select()}
+          placeholder="Kod ICAO lub IATA (np. EPKT, KTW)"
           maxLength={4}
           className={styles.input}
         />
