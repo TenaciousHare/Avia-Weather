@@ -3,8 +3,9 @@ import type { Metar } from "./types";
 import styles from "./MetarCard.module.css";
 import { degreesToCardinal, knotsToMps } from "./utils/wind";
 import { isaDeviation, relativeHumidity } from "./utils/atmosphere";
-import { flightRuleColor } from "./utils/flightRules";
+import { flightRuleColor, describeFlightRules } from "./utils/flightRules";
 import { feetToMeters, formatVisibility } from "./utils/units";
+import { describeCloudCover } from "./utils/clouds";
 
 export function MetarCard({
   metar,
@@ -43,7 +44,11 @@ export function MetarCard({
         >
           {metar.flight_rules}
         </span>
+        <span className={styles.ruleDesc}>
+          ({describeFlightRules(metar.flight_rules)})
+        </span>
       </h2>
+
       <p className={styles.row}>
         Temperatura: {metar.temperature.value}°C, Odchylenie ISA{" "}
         {dev > 0 ? "+" : ""}
@@ -62,7 +67,7 @@ export function MetarCard({
           Wiatr:{" "}
           {metar.wind_direction.value !== null
             ? `${metar.wind_direction.value}° (${degreesToCardinal(metar.wind_direction.value)})`
-            : metar.wind_direction.repr}{" "}
+            : `${metar.wind_direction.repr} (zmienny)`}{" "}
           {knotsToMps(metar.wind_speed.value)} m/s
           {metar.wind_gust &&
             `, w porywach do ${knotsToMps(metar.wind_gust.value)} m/s`}
@@ -77,7 +82,8 @@ export function MetarCard({
         <ul className={styles.clouds}>
           {metar.clouds.map((cloud) => (
             <li key={cloud.repr}>
-              {cloud.type} na {feetToMeters(cloud.altitude * 100)} m
+              {cloud.type} ({describeCloudCover(cloud.type)}) na{" "}
+              {feetToMeters(cloud.altitude * 100)} m
             </li>
           ))}
         </ul>

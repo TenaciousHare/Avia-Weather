@@ -7,3 +7,13 @@ export function flightRuleColor(rules: string): string {
   };
   return colors[rules] ?? "gray";
 }
+
+export function describeFlightRules(code: string): string {
+  const flightRulesMap: Record<string, string> = {
+    VFR: "dobre warunki",
+    MVFR: "umiarkowane warunki",
+    IFR: "trudne warunki",
+    LIFR: "bardzo trudne warunki",
+  };
+  return flightRulesMap[code.toUpperCase()] ?? code;
+}
