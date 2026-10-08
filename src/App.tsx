@@ -56,7 +56,14 @@ function App() {
   return (
     <main className={styles.app}>
       <header className={styles.header}>
-        <h1>METAR</h1>
+        <div className={styles.brand}>
+          <img src="/favicon.png" alt="" className={styles.logo} />
+          <div>
+            <h1 className={styles.title}>Avia Weather</h1>
+            <p className={styles.tagline}>METAR & TAF</p>
+          </div>
+        </div>
+
         <button
           className={styles.themeToggle}
           type="button"
