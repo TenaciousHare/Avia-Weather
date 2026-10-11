@@ -1,6 +1,6 @@
 # METAR Weather Viewer ✈️
 
-[![CI](https://github.com/TenaciousHare/metar/actions/workflows/ci.yml/badge.svg)](https://github.com/TenaciousHare/metar/actions/workflows/ci.yml)
+[![CI](https://github.com/TenaciousHare/avia-weather/actions/workflows/ci.yml/badge.svg)](https://github.com/TenaciousHare/avia-weather/actions/workflows/ci.yml)
 
 **[Live demo →](https://avia-weather.netlify.app/)**
 
