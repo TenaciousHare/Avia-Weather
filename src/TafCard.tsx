@@ -1,9 +1,11 @@
 import type { Taf } from "./types";
 import styles from "./TafCard.module.css";
-import { flightRuleColor } from "./utils/flightRules";
+import { flightRuleColor, describeFlightRules } from "./utils/flightRules";
 import { formatZulu } from "./utils/time";
 import { degreesToCardinal, knotsToMps } from "./utils/wind";
 import { feetToMeters, formatVisibility } from "./utils/units";
+import { describeCloudCover } from "./utils/clouds";
+import { describeForecastType } from "./utils/taf";
 
 interface TafCardProps {
   taf: Taf;
@@ -19,15 +21,24 @@ export function TafCard({ taf }: TafCardProps) {
 
       {taf.forecast.map((period) => (
         <div className={styles.period} key={period.start_time.dt}>
-          <h3 className={styles.periodHeader}>
-            {period.type}{" "}
-            <span
-              className={styles.badge}
-              style={{ backgroundColor: flightRuleColor(period.flight_rules) }}
-            >
-              {period.flight_rules}
-            </span>
-          </h3>
+          <div className={styles.periodHeader}>
+            <h3 className={styles.periodType}>
+              {period.type} ({describeForecastType(period.type)})
+            </h3>
+            <div className={styles.ruleLine}>
+              <span
+                className={styles.badge}
+                style={{
+                  backgroundColor: flightRuleColor(period.flight_rules),
+                }}
+              >
+                {period.flight_rules}
+              </span>
+              <span className={styles.ruleDesc}>
+                ({describeFlightRules(period.flight_rules)})
+              </span>
+            </div>
+          </div>
           <p className={styles.row}>
             {formatZulu(period.start_time.dt)} →{" "}
             {formatZulu(period.end_time.dt)}
@@ -42,7 +53,7 @@ export function TafCard({ taf }: TafCardProps) {
               Wiatr:{" "}
               {period.wind_direction.value !== null
                 ? `${period.wind_direction.value}° (${degreesToCardinal(period.wind_direction.value)})`
-                : period.wind_direction.repr}{" "}
+                : `${period.wind_direction.repr} (zmienny)`}{" "}
               {knotsToMps(period.wind_speed.value)} m/s
               {period.wind_gust &&
                 `, w porywach do ${knotsToMps(period.wind_gust.value)} m/s`}
@@ -59,7 +70,8 @@ export function TafCard({ taf }: TafCardProps) {
             <ul className={styles.clouds}>
               {period.clouds.map((cloud) => (
                 <li key={cloud.repr}>
-                  {cloud.type} na {feetToMeters(cloud.altitude * 100)}m
+                  {cloud.type} ({describeCloudCover(cloud.type)}) na{" "}
+                  {feetToMeters(cloud.altitude * 100)}m
                 </li>
               ))}
             </ul>

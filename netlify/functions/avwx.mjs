@@ -12,7 +12,7 @@ export default async (req) => {
     });
   }
 
-  if (!/^[A-Za-z]{4}$/.test(icao)) {
+  if (!/^[A-Za-z]{3,4}$/.test(icao)) {
     return new Response(JSON.stringify({ error: "Invalid icao" }), {
       status: 400,
     });
